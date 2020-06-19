@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: sinthweb
+    app: demo1
+    version: "1.1"
+  name: sinthweb
+  namespace: sinthera
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      run: sinthweb
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: sinthweb
+        app: demo1
+        version: "1.1"
+    spec:
+      containers:
+      - image: docker.io/andreacasini/sinthera-web-80
+        imagePullPolicy: Always
+        name: sinthweb
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: sinthweb
+    app: demo1
+    version: "1.1"
+  name: service-sinthweb
+  namespace: sinthera
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: sinthweb
+    app: demo1
+  sessionAffinity: None
+  type: ClusterIP
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-demo-workload-1
+  namespace: sinthera
+  labels:
+    app: demo1
+    version: "1.1"
+spec:
+  rules:
+  - host: demo-workload-1.k8s.lab
+    http:
+      paths:
+      - backend:
+          serviceName: service-sinthweb
+          servicePort: 80

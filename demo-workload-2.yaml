@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: mintweb
+  name: mintweb
+  namespace: mintweb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: mintweb
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: mintweb
+    spec:
+      containers:
+      - image: docker.io/andreacasini/mint-web-80
+        imagePullPolicy: Always
+        name: mintweb
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: mintweb
+  name: service-mintweb
+  namespace: mintweb
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: mintweb
+  sessionAffinity: None
+  type: ClusterIP
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-demo-workload-2
+  namespace: mintweb
+spec:
+  rules:
+  - host: demo-workload-2.k8s.lab
+    http:
+      paths:
+      - backend:
+          serviceName: service-mintweb
+          servicePort: 80
