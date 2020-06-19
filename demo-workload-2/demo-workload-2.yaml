@@ -5,7 +5,7 @@ metadata:
     run: mintweb
   name: mintweb
 spec:
-  replicas: 3
+  replicas: 8
   selector:
     matchLabels:
       run: mintweb
