@@ -4,7 +4,6 @@ metadata:
   labels:
     run: mintweb
   name: mintweb
-  namespace: mintweb
 spec:
   replicas: 3
   selector:
@@ -35,7 +34,6 @@ metadata:
   labels:
     run: mintweb
   name: service-mintweb
-  namespace: mintweb
 spec:
   ports:
   - port: 80
@@ -51,7 +49,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ingress-demo-workload-2
-  namespace: mintweb
 spec:
   rules:
   - host: demo-workload-2.k8s.lab

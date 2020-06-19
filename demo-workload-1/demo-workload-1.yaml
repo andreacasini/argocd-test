@@ -6,7 +6,6 @@ metadata:
     app: demo1
     version: "1.1"
   name: sinthweb
-  namespace: sinthera
 spec:
   replicas: 4
   selector:
@@ -41,7 +40,6 @@ metadata:
     app: demo1
     version: "1.1"
   name: service-sinthweb
-  namespace: sinthera
 spec:
   ports:
   - port: 80
@@ -58,7 +56,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ingress-demo-workload-1
-  namespace: sinthera
   labels:
     app: demo1
     version: "1.1"
